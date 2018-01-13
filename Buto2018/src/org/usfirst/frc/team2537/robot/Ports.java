@@ -13,7 +13,8 @@ public class Ports {
 	public static final int SLOW_SHOOTER = 1, FAST_SHOOTER = 3;
 
 	// Joystick and XBox Ports
-	public static final int LEFT_JOYSTICK = 0, RIGHT_JOYSTICK = 1;
+	//public static final int LEFT_JOYSTICK = 0, RIGHT_JOYSTICK = 1;
+	public static final int XBOX=0;
 
 	// Joystick Buttons
 	public static final int CLIMBER_ACTIVATOR_BUTTON = 3, CLIMBER_KILL_SWITCH = 2;
