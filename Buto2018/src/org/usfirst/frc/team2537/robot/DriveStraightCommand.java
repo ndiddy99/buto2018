@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveStraightCommand extends Command {
 
-	private final double targetTicks;
+	private double targetTicks;
 	final int ENCODER_TOLERANCE = 500;
 	final double SPEED = .5;
 	final boolean DEBUG = true;
@@ -23,7 +23,7 @@ public class DriveStraightCommand extends Command {
 		Robot.driveSys.resetEncoders();
 		// Robot.driveSys.getAhrs().reset();
 		Robot.driveSys.setMode(ControlMode.PercentOutput);
-		Robot.driveSys.setFrontMotors(SPEED);
+		Robot.driveSys.setAllMotors(SPEED);
 		// Robot.driveSys.setFrontMotors(targetTicks, -targetTicks);
 	}
 
@@ -31,9 +31,13 @@ public class DriveStraightCommand extends Command {
 	protected boolean isFinished() {
 		if (DEBUG) {
 			System.out.println("current ticks " + Robot.driveSys.getEncoderAverage());
-			System.out.println("distance from target ticks: " + Robot.driveSys.getEncoderAverage());
+			System.out.println("distance from target ticks: " + Math.abs(Robot.driveSys.getEncoderAverage()-targetTicks));
 		}
 		return Math.abs(Robot.driveSys.getEncoderAverage() - targetTicks) < ENCODER_TOLERANCE;
+	}
+	
+	protected void end(){
+		Robot.driveSys.stopMotors();
 	}
 
 	// Called when another command which requires one or more of the same
