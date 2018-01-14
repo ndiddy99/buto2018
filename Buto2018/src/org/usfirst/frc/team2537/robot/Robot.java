@@ -14,18 +14,16 @@ import edu.wpi.first.wpilibj.command.Scheduler;
  */
 public class Robot extends IterativeRobot {
 
-	public static DriveSubsystem driveSys;
 	public static XboxController xbox;
 	
 	@Override
 	public void robotInit() {
 		xbox = new XboxController(Ports.XBOX);
-		driveSys = new DriveSubsystem();
 	}
 
 	@Override
 	public void autonomousInit() {
-		new DriveStraightCommand(36).start();
+		new DriveStraightCommand(100, 1).start();
 	}
 
 	@Override
@@ -43,11 +41,11 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		if (Math.abs(xbox.getY(Hand.kLeft)) > .05 || Math.abs(xbox.getY(Hand.kRight)) > .05) {
-			driveSys.setLeftMotors(-xbox.getY(Hand.kLeft));
-			driveSys.setRightMotors(-xbox.getY(Hand.kRight));
+			DriveSubsystem.getInstance().setMotors(-xbox.getY(Hand.kLeft), Motor.FRONT_LEFT, Motor.BACK_LEFT);
+			DriveSubsystem.getInstance().setMotors(-xbox.getY(Hand.kRight), Motor.FRONT_RIGHT, Motor.BACK_RIGHT);
 		}
 		else{
-			driveSys.setMotors(0);
+			DriveSubsystem.getInstance().setMotors(0);
 		}
 	}
 
