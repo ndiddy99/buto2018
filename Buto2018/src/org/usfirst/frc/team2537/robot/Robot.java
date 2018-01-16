@@ -1,6 +1,8 @@
 package org.usfirst.frc.team2537.robot;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 /**
@@ -11,35 +13,43 @@ import edu.wpi.first.wpilibj.command.Scheduler;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	
-	public static DriveSubsystem driveSys;
 
+	public static XboxController xbox;
+	
 	@Override
 	public void robotInit() {
-		driveSys = new DriveSubsystem();
+		xbox = new XboxController(Ports.XBOX);
 	}
 
 	@Override
 	public void autonomousInit() {
+		new DriveStraightCommand(100, 1).start();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
-
+		Scheduler.getInstance().run();
 	}
-	
+
 	@Override
 	public void teleopInit() {
-		new DriveStraightCommand(420).start();
+		//Navx.getInstance().reset();
+		Navx.getInstance().resetDisplacement();
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		if (Math.abs(xbox.getY(Hand.kLeft)) > .05 || Math.abs(xbox.getY(Hand.kRight)) > .05) {
+			DriveSubsystem.getInstance().setMotors(-xbox.getY(Hand.kLeft), Motor.FRONT_LEFT, Motor.BACK_LEFT);
+			DriveSubsystem.getInstance().setMotors(-xbox.getY(Hand.kRight), Motor.FRONT_RIGHT, Motor.BACK_RIGHT);
+		}
+		else{
+			DriveSubsystem.getInstance().setMotors(0);
+		}
 	}
 
 	@Override
 	public void testPeriodic() {
 	}
 }
-

@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class EncoderTest extends Command {
 
 	public EncoderTest(){
-		requires(Robot.driveSys);
+		requires(DriveSubsystem.getInstance());
 	}
 	
 	@Override
@@ -15,7 +15,7 @@ public class EncoderTest extends Command {
 	
 	@Override
 	protected void execute(){
-		System.out.println(Robot.driveSys.getEncoderAverage());
+		System.out.println(DriveSubsystem.getInstance().getEncoderAverage());
 	}
 	
 	@Override

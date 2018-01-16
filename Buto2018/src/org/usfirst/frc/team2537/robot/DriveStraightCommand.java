@@ -6,44 +6,127 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveStraightCommand extends Command {
+	
+/******************************************************************************/
+/*                              PUBLIC CONSTANTS                              */
+/******************************************************************************/
 
+	/** when we are at or below this angle (degrees) from the target, we gradually slow down until the angle is 0 */
+	public static final double ANGLE_TOLERANCE = 1;
+	
+	public static final double SLOW_DOWN_POWER = 15;
+	
+	public static final double[] ANGLE_PID = new double[]{20,0,0};
+	
+	/** value [0,1] representing the percent of power to motors */
+	public static final double DEFAULT_PERCENT_OUTPUT = 1;
+	
+	
+/******************************************************************************/
+/*                             INSTANCE VARIABLES                             */
+/******************************************************************************/
+	
 	private double targetTicks;
-	final int ENCODER_TOLERANCE = 500;
-	final double SPEED = .5;
-	final boolean DEBUG = true;
+	private double motorPower;
+	private double slowDownDistance;
+	private boolean slowingDown;
+	
+	
+/******************************************************************************/
+/*                                CONSTRUCTORS                                */
+/******************************************************************************/
 
+	/**
+	 * @param distance (inches)
+	 * @param defaultPercentOutput power to the motors [0,1]
+	 */
 	public DriveStraightCommand(double distance) {
-		requires(Robot.driveSys);
-		targetTicks = distance * DriveSubsystem.TICKS_PER_INCH;
+		this(distance, DEFAULT_PERCENT_OUTPUT);
 	}
 
-	// Called just before this Command runs the first time
+	/**
+	 * @param distance (inches)
+	 * @param defaultPercentOutput power to the motors [0,1]
+	 */
+	public DriveStraightCommand(double distance, double defaultPercentOutput) {
+		requires(DriveSubsystem.getInstance());
+		targetTicks = distance * DriveSubsystem.TICKS_PER_REVOLUTION / DriveSubsystem.WHEEL_CIRCUMFERENCE;
+		motorPower = defaultPercentOutput;
+		slowingDown = false;
+	}
+
+	
+/******************************************************************************/
+/*                             OVERRIDEN METHODS                              */
+/******************************************************************************/
+	
+	@Override
 	protected void initialize() {
-		System.out.println("[DriveStraightCommand] target ticks: " + targetTicks);
-		Robot.driveSys.resetEncoders();
-		// Robot.driveSys.getAhrs().reset();
-		Robot.driveSys.setMode(ControlMode.PercentOutput);
-		Robot.driveSys.setAllMotors(SPEED);
-		// Robot.driveSys.setFrontMotors(targetTicks, -targetTicks);
-	}
-
-	// Make this return true when this Command no longer needs to run execute()
-	protected boolean isFinished() {
-		if (DEBUG) {
-			System.out.println("current ticks " + Robot.driveSys.getEncoderAverage());
-			System.out.println("distance from target ticks: " + Math.abs(Robot.driveSys.getEncoderAverage()-targetTicks));
-		}
-		return Math.abs(Robot.driveSys.getEncoderAverage() - targetTicks) < ENCODER_TOLERANCE;
+		DriveSubsystem.getInstance().resetEncoders();
+		DriveSubsystem.getInstance().setMode(ControlMode.PercentOutput);
+		Navx.getInstance().reset();
 	}
 	
+	@Override
+	protected void execute(){
+		/* we convert angles to values in range [-1,1] */
+		double normalizedAngle = Navx.getInstance().getAngle() / 180;
+		double normalizedSlowDownAngle = ANGLE_TOLERANCE / 180;
+		double currentTicks = DriveSubsystem.getInstance().getEncoderAverage();
+		double power = motorPower;
+		double velocityAvg = DriveSubsystem.getInstance().getVelocityAverage();
+		slowDownDistance = calculateSlowDownDistance(DriveSubsystem.getInstance().getVelocityAverage());
+		System.out.println("avg velocity: " + (int)velocityAvg +"  slow down distance: " + slowDownDistance);
+		
+		if(!slowingDown && targetTicks - currentTicks <= DriveSubsystem.getInstance().inches2Ticks(slowDownDistance)){
+			System.out.println("\n\n\n\n\n SLOWING DOWN!!! slow down distance: " + slowDownDistance);
+			slowingDown = true;
+		}
+		
+		if(slowingDown){
+			power *= (targetTicks - currentTicks) / targetTicks;
+		}
+		
+		
+		
+		/* we add a speed delta to compensate for being off angle */
+		double slowDownDelta = 0;
+		if(Math.abs(normalizedAngle) > Math.abs(normalizedSlowDownAngle)){
+			slowDownDelta = normalizedAngle * ANGLE_PID[0] * power;
+		}
+		
+		DriveSubsystem.getInstance().setMotors(power - slowDownDelta, Motor.FRONT_LEFT, Motor.BACK_LEFT);
+		DriveSubsystem.getInstance().setMotors(power + slowDownDelta, Motor.FRONT_RIGHT, Motor.BACK_RIGHT);
+	}
+	
+	@Override
+	protected boolean isFinished() {
+		return DriveSubsystem.getInstance().getEncoderAverage() >= targetTicks;
+	}
+	
+	@Override
 	protected void end(){
-		Robot.driveSys.stopMotors();
+		DriveSubsystem.getInstance().setMotors(0);
 	}
 
-	// Called when another command which requires one or more of the same
-	// subsystems is scheduled to run
+	/** Called when another command which requires one or more of the same subsystems is scheduled to run
+	 *
+	 */
+	@Override
 	protected void interrupted() {
 		end();
 	}
 
+	
+/******************************************************************************/
+/*                                   MISC                                     */
+/******************************************************************************/
+	
+	/**
+	 * @param speed (inches per second)
+	 * @return the optimal distance away from the target at which the robot should slow down (inches)
+	 */
+	private double calculateSlowDownDistance(double speed){
+		return Math.pow(speed, 2) / SLOW_DOWN_POWER;
+	}
 }
