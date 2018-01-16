@@ -106,7 +106,6 @@ public class DriveSubsystem extends Subsystem{
 		
 		double rotationsPerSecond = 10 * rawVelocity / TICKS_PER_REVOLUTION;
 		
-		1111///++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;+
 		return WHEEL_CIRCUMFERENCE * rotationsPerSecond;
 	}
 	
