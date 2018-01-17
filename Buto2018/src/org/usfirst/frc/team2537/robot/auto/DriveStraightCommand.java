@@ -26,6 +26,11 @@ public class DriveStraightCommand extends Command {
 	/** value [0,1] representing the percent of power to motors */
 	public static final double DEFAULT_PERCENT_OUTPUT = 1;
 	
+	/* first element is number of encoder ticks
+	 * second element is system nanoseconds that denote the time of reading the encoder
+	 */
+	private double[] previousTickTime;
+	
 	
 /******************************************************************************/
 /*                             INSTANCE VARIABLES                             */
@@ -58,6 +63,7 @@ public class DriveStraightCommand extends Command {
 		targetTicks = Conversions.convertDistance(distance, Distances.INCHES, Distances.TICKS);
 		motorPower = defaultPercentOutput;
 		slowingDown = false;
+		previousTickTime = new double[2];
 	}
 
 	
@@ -81,10 +87,19 @@ public class DriveStraightCommand extends Command {
 		double power = motorPower;
 		double velocityAvg = DriveSubsystem.getInstance().getVelocityAverage();
 		
+		double[] tickTime = new double[2];
+		tickTime[0] = DriveSubsystem.getInstance().getEncoderAverage();
+		tickTime[1] = System.nanoTime();
 		
-		if(!slowingDown){ 
+		double velocity = (tickTime[0] - previousTickTime[0]) / (tickTime[1] - previousTickTime[1]);
+		velocity *= 1e9;
+		
+		previousTickTime = tickTime;
+		
+		if(!slowingDown){
 			slowDownDistance = calculateSlowDownDistance(DriveSubsystem.getInstance().getVelocityAverage());
-			System.out.println("avg velocity: " + (int)velocityAvg +" in/s;  slow down distance: " + slowDownDistance + " in.");
+			System.out.println("v1: " + (double) ((int) (velocityAvg * 100)) / 100 + " --- v2: " + (double) ((int) velocity * 100) / 100);
+//			System.out.println("avg velocity: " + (int)velocityAvg +" in/s;  slow down distance: " + slowDownDistance + " in.");
 			slowDownDistance = Conversions.convertDistance(slowDownDistance, Distances.INCHES, Distances.TICKS);
 			if(targetTicks - currentTicks <= slowDownDistance){
 				System.out.println("\n\n\n\n\n SLOWING DOWN!!! slow down distance: " + slowDownDistance);
@@ -96,8 +111,6 @@ public class DriveStraightCommand extends Command {
 			System.out.println("avg velocity: " + (int)velocityAvg +" in/s");
 			power *= (targetTicks - currentTicks) / targetTicks;
 		}
-		
-		
 		
 		/* we add a speed delta to compensate for being off angle */
 		double slowDownDelta = 0;

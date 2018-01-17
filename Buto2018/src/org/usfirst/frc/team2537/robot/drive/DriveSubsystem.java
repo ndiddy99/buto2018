@@ -111,10 +111,10 @@ public class DriveSubsystem extends Subsystem{
 			talonFrontLeft.set(controlMode, speed*LEFT_MOTOR_DIRECTION);
 		}
 		if(id == Motor.FRONT_RIGHT || id == Motor.RIGHT || id == Motor.FRONT || id == Motor.ALL){
-			talonFrontRight.set(controlMode, speed*LEFT_MOTOR_DIRECTION);
+			talonFrontRight.set(controlMode, speed*RIGHT_MOTOR_DIRECTION);
 		}
 		if(id == Motor.BACK_LEFT || id == Motor.LEFT || id == Motor.BACK || id == Motor.ALL){
-			talonBackLeft.set(speed*RIGHT_MOTOR_DIRECTION);
+			talonBackLeft.set(speed*LEFT_MOTOR_DIRECTION);
 		}
 		if(id == Motor.BACK_RIGHT || id == Motor.LEFT || id == Motor.BACK || id == Motor.ALL){
 			talonBackRight.set(speed*RIGHT_MOTOR_DIRECTION);
