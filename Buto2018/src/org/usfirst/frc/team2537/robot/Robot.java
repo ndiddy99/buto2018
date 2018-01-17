@@ -1,6 +1,12 @@
 package org.usfirst.frc.team2537.robot;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+
+import org.usfirst.frc.team2537.robot.auto.DriveStraightCommand;
+import org.usfirst.frc.team2537.robot.auto.Navx;
+import org.usfirst.frc.team2537.robot.drive.DriveSubsystem;
+import org.usfirst.frc.team2537.robot.drive.Motor;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.command.Scheduler;

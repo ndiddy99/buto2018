@@ -1,9 +1,11 @@
 package org.usfirst.frc.team2537.robot.conversions;
 
+import org.usfirst.frc.team2537.robot.Specs;
+
 public enum Distances{
 	TICKS			(1),
-	REVOLUTIONS		(Conversions.TICKS_PER_REVOLUTION),
-	INCHES			(REVOLUTIONS.getTicks()*Math.PI*Conversions.WHEEL_DIAMETER),
+	REVOLUTIONS		(Specs.TICKS_PER_REVOLUTION),
+	INCHES			(REVOLUTIONS.getTicks()*Math.PI*Specs.WHEEL_DIAMETER),
 	FEET			(INCHES.getTicks()*12),
 	CENTIMETERS		(INCHES.getTicks()/2.54),
 	METERS			(CENTIMETERS.getTicks()*100),

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team2537.robot;
+package org.usfirst.frc.team2537.robot.auto;
 
 import com.kauailabs.navx.frc.AHRS;
 

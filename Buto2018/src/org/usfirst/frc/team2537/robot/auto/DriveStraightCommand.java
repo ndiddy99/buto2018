@@ -1,5 +1,10 @@
-package org.usfirst.frc.team2537.robot;
+package org.usfirst.frc.team2537.robot.auto;
 
+
+import org.usfirst.frc.team2537.robot.conversions.Conversions;
+import org.usfirst.frc.team2537.robot.conversions.Distances;
+import org.usfirst.frc.team2537.robot.drive.DriveSubsystem;
+import org.usfirst.frc.team2537.robot.drive.Motor;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -50,7 +55,7 @@ public class DriveStraightCommand extends Command {
 	 */
 	public DriveStraightCommand(double distance, double defaultPercentOutput) {
 		requires(DriveSubsystem.getInstance());
-		targetTicks = distance * DriveSubsystem.TICKS_PER_REVOLUTION / DriveSubsystem.WHEEL_CIRCUMFERENCE;
+		targetTicks = Conversions.convertDistance(distance, Distances.INCHES, Distances.TICKS);
 		motorPower = defaultPercentOutput;
 		slowingDown = false;
 	}
@@ -75,15 +80,20 @@ public class DriveStraightCommand extends Command {
 		double currentTicks = DriveSubsystem.getInstance().getEncoderAverage();
 		double power = motorPower;
 		double velocityAvg = DriveSubsystem.getInstance().getVelocityAverage();
-		slowDownDistance = calculateSlowDownDistance(DriveSubsystem.getInstance().getVelocityAverage());
-		System.out.println("avg velocity: " + (int)velocityAvg +"  slow down distance: " + slowDownDistance);
 		
-		if(!slowingDown && targetTicks - currentTicks <= DriveSubsystem.getInstance().inches2Ticks(slowDownDistance)){
-			System.out.println("\n\n\n\n\n SLOWING DOWN!!! slow down distance: " + slowDownDistance);
-			slowingDown = true;
+		
+		if(!slowingDown){ 
+			slowDownDistance = calculateSlowDownDistance(DriveSubsystem.getInstance().getVelocityAverage());
+			System.out.println("avg velocity: " + (int)velocityAvg +" in/s;  slow down distance: " + slowDownDistance + " in.");
+			slowDownDistance = Conversions.convertDistance(slowDownDistance, Distances.INCHES, Distances.TICKS);
+			if(targetTicks - currentTicks <= slowDownDistance){
+				System.out.println("\n\n\n\n\n SLOWING DOWN!!! slow down distance: " + slowDownDistance);
+				slowingDown = true;
+			}
 		}
 		
 		if(slowingDown){
+			System.out.println("avg velocity: " + (int)velocityAvg +" in/s");
 			power *= (targetTicks - currentTicks) / targetTicks;
 		}
 		
@@ -129,4 +139,5 @@ public class DriveStraightCommand extends Command {
 	private double calculateSlowDownDistance(double speed){
 		return Math.pow(speed, 2) / SLOW_DOWN_POWER;
 	}
+	
 }

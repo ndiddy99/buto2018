@@ -1,4 +1,6 @@
-package org.usfirst.frc.team2537.robot;
+package org.usfirst.frc.team2537.robot.auto;
+
+import org.usfirst.frc.team2537.robot.drive.DriveSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 

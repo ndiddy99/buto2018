@@ -1,4 +1,9 @@
-package org.usfirst.frc.team2537.robot;
+package org.usfirst.frc.team2537.robot.drive;
+
+import org.usfirst.frc.team2537.robot.Ports;
+import org.usfirst.frc.team2537.robot.conversions.Conversions;
+import org.usfirst.frc.team2537.robot.conversions.Distances;
+import org.usfirst.frc.team2537.robot.conversions.Times;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -15,17 +20,6 @@ public class DriveSubsystem extends Subsystem{
 /******************************************************************************/
 /*                              PUBLIC CONSTANTS                              */
 /******************************************************************************/
-		
-		/** inches */
-		public static final double WHEEL_DIAMETER = 7.5;
-		
-		/** inches */
-		public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
-		
-		/** encoder ticks per full wheel revolution */
-		public static final int TICKS_PER_REVOLUTION = 1024;
-		
-		public static final double TICKS_PER_INCH = TICKS_PER_REVOLUTION / WHEEL_CIRCUMFERENCE;
 		
 		/** set to 1 if the motors are in the forward direction
 		 *  otherwise set to -1 when the motors are upside-down
@@ -103,10 +97,8 @@ public class DriveSubsystem extends Subsystem{
 		/* ticks per 100ms */
 		double rawVelocity = (talonFrontLeft.getSelectedSensorVelocity(0)
 				+ talonFrontRight.getSelectedSensorVelocity(0)) / 2;
-		
-		double rotationsPerSecond = 10 * rawVelocity / TICKS_PER_REVOLUTION;
-		
-		return WHEEL_CIRCUMFERENCE * rotationsPerSecond;
+
+		return Conversions.convertSpeed(rawVelocity, Distances.TICKS, Times.HUNDRED_MS, Distances.INCHES, Times.SECONDS);
 	}
 	
 	
@@ -115,19 +107,17 @@ public class DriveSubsystem extends Subsystem{
 /******************************************************************************/
 	
 	public void setMotor(double speed, Motor id){
-		switch(id){
-		case FRONT_LEFT:
+		if(id == Motor.FRONT_LEFT || id == Motor.LEFT || id == Motor.FRONT || id == Motor.ALL){
 			talonFrontLeft.set(controlMode, speed*LEFT_MOTOR_DIRECTION);
-			break;
-		case FRONT_RIGHT:
-			talonFrontRight.set(controlMode, speed*RIGHT_MOTOR_DIRECTION);
-			break;
-		case BACK_LEFT:
-			talonBackLeft.set(speed*LEFT_MOTOR_DIRECTION);
-			break;
-		case BACK_RIGHT:
+		}
+		if(id == Motor.FRONT_RIGHT || id == Motor.RIGHT || id == Motor.FRONT || id == Motor.ALL){
+			talonFrontRight.set(controlMode, speed*LEFT_MOTOR_DIRECTION);
+		}
+		if(id == Motor.BACK_LEFT || id == Motor.LEFT || id == Motor.BACK || id == Motor.ALL){
+			talonBackLeft.set(speed*RIGHT_MOTOR_DIRECTION);
+		}
+		if(id == Motor.BACK_RIGHT || id == Motor.LEFT || id == Motor.BACK || id == Motor.ALL){
 			talonBackRight.set(speed*RIGHT_MOTOR_DIRECTION);
-			break;
 		}
 	}
 	
@@ -153,19 +143,6 @@ public class DriveSubsystem extends Subsystem{
 	
 	public void setMode(ControlMode controlMode) {
 		this.controlMode = controlMode;
-	}
-	
-	
-/******************************************************************************/
-/*                                CONVERSIONS                                 */
-/******************************************************************************/	
-	
-	public double ticks2Inches(double ticks){
-		return ticks / TICKS_PER_INCH;
-	}
-	
-	public double inches2Ticks(double inches){
-		return inches * TICKS_PER_INCH;
 	}
 	
 }

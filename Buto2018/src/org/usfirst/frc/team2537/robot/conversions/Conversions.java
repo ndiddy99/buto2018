@@ -2,9 +2,6 @@ package org.usfirst.frc.team2537.robot.conversions;
 
 public class Conversions {
 	
-	public static final double WHEEL_DIAMETER = 7.5;
-	public static final int TICKS_PER_REVOLUTION = 1024;
-	
 	public static double convertDistance(double value, Distances currentType, Distances desiredType){
 		return value * desiredType.getTicks() / currentType.getTicks();
 	}
