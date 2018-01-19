@@ -15,4 +15,8 @@ public class Conversions {
 		return value * (currentDistanceType.getTicks() / currentTimeType.getMillis()) 
 				* (desiredTimeType.getMillis() / desiredDistanceType.getTicks());
 	}
+	
+	public static double roundDigits(double value, int digits){
+		return (int)(value * Math.pow(10, digits))/Math.pow(10, digits);
+	}
 }
