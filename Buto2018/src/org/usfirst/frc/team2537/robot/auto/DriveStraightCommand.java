@@ -63,7 +63,6 @@ public class DriveStraightCommand extends Command {
 		targetTicks = Conversions.convertDistance(distance, Distances.INCHES, Distances.TICKS);
 		motorPower = defaultPercentOutput;
 		slowingDown = false;
-		previousTickTime = new double[2];
 	}
 
 	
@@ -83,23 +82,13 @@ public class DriveStraightCommand extends Command {
 		/* we convert angles to values in range [-1,1] */
 		double normalizedAngle = Navx.getInstance().getAngle() / 180;
 		double normalizedSlowDownAngle = ANGLE_TOLERANCE / 180;
-		double currentTicks = DriveSubsystem.getInstance().getEncoderAverage();
+		double currentTicks = DriveSubsystem.getInstance().getEncoderDistance();
 		double power = motorPower;
-		double velocityAvg = DriveSubsystem.getInstance().getVelocityAverage();
-		
-		double[] tickTime = new double[2];
-		tickTime[0] = DriveSubsystem.getInstance().getEncoderAverage();
-		tickTime[1] = System.nanoTime();
-		
-		double velocity = (tickTime[0] - previousTickTime[0]) / (tickTime[1] - previousTickTime[1]);
-		velocity *= 1e9;
-		
-		previousTickTime = tickTime;
+		double encoderVelocity = DriveSubsystem.getInstance().getEncoderVelocity();
 		
 		if(!slowingDown){
-			slowDownDistance = calculateSlowDownDistance(DriveSubsystem.getInstance().getVelocityAverage());
-			System.out.println("v1: " + (double) ((int) (velocityAvg * 100)) / 100 + " --- v2: " + (double) ((int) velocity * 100) / 100);
-//			System.out.println("avg velocity: " + (int)velocityAvg +" in/s;  slow down distance: " + slowDownDistance + " in.");
+			slowDownDistance = calculateSlowDownDistance(encoderVelocity);
+//			System.out.println("avg velocity: " + (int)encoderVelocity +" in/s;  slow down distance: " + slowDownDistance + " in.");
 			slowDownDistance = Conversions.convertDistance(slowDownDistance, Distances.INCHES, Distances.TICKS);
 			if(targetTicks - currentTicks <= slowDownDistance){
 				System.out.println("\n\n\n\n\n SLOWING DOWN!!! slow down distance: " + slowDownDistance);
@@ -108,7 +97,7 @@ public class DriveStraightCommand extends Command {
 		}
 		
 		if(slowingDown){
-			System.out.println("avg velocity: " + (int)velocityAvg +" in/s");
+			System.out.println("avg velocity: " + (int)encoderVelocity +" in/s");
 			power *= (targetTicks - currentTicks) / targetTicks;
 		}
 		
@@ -124,7 +113,7 @@ public class DriveStraightCommand extends Command {
 	
 	@Override
 	protected boolean isFinished() {
-		return DriveSubsystem.getInstance().getEncoderAverage() >= targetTicks;
+		return DriveSubsystem.getInstance().getEncoderDistance() >= targetTicks;
 	}
 	
 	@Override

@@ -39,6 +39,8 @@ public class DriveSubsystem extends Subsystem{
 	private TalonSRX talonFrontRight;
 	private PWMTalonSRX talonBackLeft;
 	private PWMTalonSRX talonBackRight;
+	private EncoderUpdater encFrontLeft;
+	private EncoderUpdater encFrontRight;
 	public ControlMode controlMode = ControlMode.PercentOutput;
 	
 	
@@ -61,8 +63,8 @@ public class DriveSubsystem extends Subsystem{
 		
 		talonFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,  0,0);
 		talonFrontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0,0);
-		
-		talonFrontLeft.getSelectedSensorVelocity(0);
+		encFrontLeft = new EncoderUpdater(talonFrontLeft);
+		encFrontRight = new EncoderUpdater(talonFrontRight);
 	}
 	
 	
@@ -80,14 +82,28 @@ public class DriveSubsystem extends Subsystem{
 /******************************************************************************/
 	
 	
-	public double getEncoderAverage(){
+	public double getEncoderDistance(){
+		
 		return (talonFrontLeft.getSensorCollection().getQuadraturePosition() * LEFT_MOTOR_DIRECTION +
 			    talonFrontRight.getSensorCollection().getQuadraturePosition() * RIGHT_MOTOR_DIRECTION) / 2;
+	}
+	
+	public double getEncoderVelocity(){
+		if(encFrontLeft.skippedCycles() < encFrontRight.skippedCycles()){
+			return encFrontLeft.latestValidVelocity() * LEFT_MOTOR_DIRECTION;
+		} else {
+			return encFrontRight.latestValidVelocity() * RIGHT_MOTOR_DIRECTION;
+		}
 	}
 	
 	public void resetEncoders() {
 		 talonFrontRight.getSensorCollection().setQuadraturePosition(0,0);
 		 talonFrontLeft.getSensorCollection().setQuadraturePosition(0,0);
+	}
+	
+	public void updateEncoders(){
+		encFrontLeft.update();
+		encFrontRight.update();
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package org.usfirst.frc.team2537.robot;
 
 import org.usfirst.frc.team2537.robot.auto.DriveStraightCommand;
 import org.usfirst.frc.team2537.robot.auto.VelocityTest;
+import org.usfirst.frc.team2537.robot.drive.DriveSubsystem;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -17,7 +18,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void robotInit() {
-		
+		DriveSubsystem.getInstance().resetEncoders();
 	}
 
 	@Override
@@ -27,6 +28,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+		DriveSubsystem.getInstance().updateEncoders();
 		Scheduler.getInstance().run();
 	}
 
@@ -37,6 +39,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		DriveSubsystem.getInstance().updateEncoders();
 		Scheduler.getInstance().run();
 	}
 
