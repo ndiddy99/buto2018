@@ -83,17 +83,20 @@ public class DriveSubsystem extends Subsystem{
 	
 	
 	public double getEncoderDistance(){
-		
-		return (talonFrontLeft.getSensorCollection().getQuadraturePosition() * LEFT_MOTOR_DIRECTION +
-			    talonFrontRight.getSensorCollection().getQuadraturePosition() * RIGHT_MOTOR_DIRECTION) / 2;
+		return (talonFrontLeft.getSelectedSensorPosition(0) * LEFT_MOTOR_DIRECTION +
+			    talonFrontRight.getSelectedSensorPosition(0) * RIGHT_MOTOR_DIRECTION) / 2;
 	}
 	
 	public double getEncoderVelocity(){
+		/*
 		if(encFrontLeft.skippedCycles() < encFrontRight.skippedCycles()){
 			return encFrontLeft.latestValidVelocity() * LEFT_MOTOR_DIRECTION;
 		} else {
 			return encFrontRight.latestValidVelocity() * RIGHT_MOTOR_DIRECTION;
 		}
+		*/
+		return (talonFrontLeft.getSelectedSensorVelocity(0) * LEFT_MOTOR_DIRECTION +
+			    talonFrontRight.getSelectedSensorVelocity(0) * RIGHT_MOTOR_DIRECTION) / 2;
 	}
 	
 	public void resetEncoders() {
@@ -132,7 +135,7 @@ public class DriveSubsystem extends Subsystem{
 		if(id == Motor.BACK_LEFT || id == Motor.LEFT || id == Motor.BACK || id == Motor.ALL){
 			talonBackLeft.set(speed*LEFT_MOTOR_DIRECTION);
 		}
-		if(id == Motor.BACK_RIGHT || id == Motor.LEFT || id == Motor.BACK || id == Motor.ALL){
+		if(id == Motor.BACK_RIGHT || id == Motor.RIGHT || id == Motor.BACK || id == Motor.ALL){
 			talonBackRight.set(speed*RIGHT_MOTOR_DIRECTION);
 		}
 	}

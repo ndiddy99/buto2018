@@ -33,7 +33,8 @@ public class VelocityTest extends Command {
 		} else {
 			DriveSubsystem.getInstance().setMotors(0);
 		}
-		System.out.println(DriveSubsystem.getInstance().getEncoderVelocity());
+		//System.out.println(DriveSubsystem.getInstance().getEncoderVelocity());
+		System.out.println(Navx.getInstance().getAngle());
 	}
 	
 	@Override
