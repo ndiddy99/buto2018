@@ -1,6 +1,6 @@
 package org.usfirst.frc.team2537.robot.auto;
 
-import org.usfirst.frc.team2537.robot.drive.DriveSubsystem;
+import org.usfirst.frc.team2537.robot.Robot;
 import org.usfirst.frc.team2537.robot.drive.Motor;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -18,7 +18,7 @@ public class RotateCommand extends Command {
 	private static final int SLOW_DOWN_ANGLE = 10;
 	private double currentAngle;
     public RotateCommand(double angle) {
-    	requires(DriveSubsystem.getInstance());
+    	requires(Robot.driveSys);
     	targetAngle = angle;
     	if(targetAngle > 180){
     		targetAngle -= 360;
@@ -28,7 +28,7 @@ public class RotateCommand extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Navx.getInstance().reset();
-    	DriveSubsystem.getInstance().setMode(ControlMode.PercentOutput);
+    	Robot.driveSys.setMode(ControlMode.PercentOutput);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -40,11 +40,11 @@ public class RotateCommand extends Command {
 		}
     	double deltaAngle = currentAngle - targetAngle;
 		if (deltaAngle > TOLERANCE){
-			DriveSubsystem.getInstance().setMotors(-speed, Motor.LEFT);
-			DriveSubsystem.getInstance().setMotors( speed, Motor.RIGHT);
+			Robot.driveSys.setMotors(-speed, Motor.LEFT);
+			Robot.driveSys.setMotors( speed, Motor.RIGHT);
 		} else if (deltaAngle < -TOLERANCE) {
-			DriveSubsystem.getInstance().setMotors( speed, Motor.LEFT);
-			DriveSubsystem.getInstance().setMotors(-speed, Motor.RIGHT);
+			Robot.driveSys.setMotors( speed, Motor.LEFT);
+			Robot.driveSys.setMotors(-speed, Motor.RIGHT);
 		}
     }
 
@@ -56,7 +56,7 @@ public class RotateCommand extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-		DriveSubsystem.getInstance().setMotors(0, Motor.ALL);
+    	Robot.driveSys.setMotors(0, Motor.ALL);
     }
 
     // Called when another command which requires one or more of the same

@@ -1,8 +1,7 @@
 package org.usfirst.frc.team2537.robot;
 
-import org.usfirst.frc.team2537.robot.auto.DriveStraightCommand;
-import org.usfirst.frc.team2537.robot.auto.VelocityTest;
 import org.usfirst.frc.team2537.robot.drive.DriveSubsystem;
+import org.usfirst.frc.team2537.robot.vision.SerialSubsystem;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -16,14 +15,19 @@ import edu.wpi.first.wpilibj.command.Scheduler;
  */
 public class Robot extends IterativeRobot {
 
+	public static SerialSubsystem serialSys;
+	public static DriveSubsystem driveSys;
+	
 	@Override
 	public void robotInit() {
-		DriveSubsystem.getInstance().resetEncoders();
+		serialSys = new SerialSubsystem();
+		driveSys = new DriveSubsystem();
+		Robot.driveSys.resetEncoders();
 	}
 
 	@Override
 	public void autonomousInit() {
-		new DriveStraightCommand(100, 1).start();
+		//new DriveStraightCommand(100, 1).start();
 	}
 
 	@Override
@@ -33,7 +37,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
-		new VelocityTest().start();
+		//new VelocityTest().start();
+		serialSys.initDefaultCommand();
 	}
 
 	@Override

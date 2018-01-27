@@ -1,8 +1,8 @@
 package org.usfirst.frc.team2537.robot.auto;
 
+import org.usfirst.frc.team2537.robot.Robot;
 import org.usfirst.frc.team2537.robot.conversions.Conversions;
 import org.usfirst.frc.team2537.robot.conversions.Distances;
-import org.usfirst.frc.team2537.robot.drive.DriveSubsystem;
 import org.usfirst.frc.team2537.robot.drive.Motor;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -57,7 +57,7 @@ public class DriveStraightCommand extends Command {
 	 *            power to the motors [0,1]
 	 */
 	public DriveStraightCommand(double distance, double defaultPercentOutput) {
-		requires(DriveSubsystem.getInstance());
+		requires(Robot.driveSys);
 		targetTicks = Conversions.convertDistance(distance, Distances.INCHES, Distances.TICKS);
 		motorPower = defaultPercentOutput;
 		slowingDown = false;
@@ -69,8 +69,8 @@ public class DriveStraightCommand extends Command {
 
 	@Override
 	protected void initialize() {
-		DriveSubsystem.getInstance().resetEncoders();
-		DriveSubsystem.getInstance().setMode(ControlMode.PercentOutput);
+		Robot.driveSys.resetEncoders();
+		Robot.driveSys.setMode(ControlMode.PercentOutput);
 		Navx.getInstance().reset();
 		System.out.println("starting angle: " + Navx.getInstance().getAngle());
 	}
@@ -80,8 +80,8 @@ public class DriveStraightCommand extends Command {
 		/* we convert angles to values in range [-1,1] */
 		double normalizedAngle = Navx.getInstance().getAngle() / 180;
 		double normalizedSlowDownAngle = ANGLE_TOLERANCE / 180;
-		double currentTicks = DriveSubsystem.getInstance().getEncoderDistance();
-		double currentVelocity = DriveSubsystem.getInstance().getEncoderVelocity();
+		double currentTicks = Robot.driveSys.getEncoderDistance();
+		double currentVelocity = Robot.driveSys.getEncoderVelocity();
 		double power = motorPower;
 
 		if (!slowingDown) {
@@ -113,18 +113,18 @@ public class DriveStraightCommand extends Command {
 			slowDownDelta = normalizedAngle * ANGLE_PID[0] * power;
 		}
 
-		DriveSubsystem.getInstance().setMotors(power - slowDownDelta, Motor.LEFT);
-		DriveSubsystem.getInstance().setMotors(power + slowDownDelta, Motor.RIGHT);
+		Robot.driveSys.setMotors(power - slowDownDelta, Motor.LEFT);
+		Robot.driveSys.setMotors(power + slowDownDelta, Motor.RIGHT);
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return DriveSubsystem.getInstance().getEncoderDistance() >= targetTicks;
+		return Robot.driveSys.getEncoderDistance() >= targetTicks;
 	}
 
 	@Override
 	protected void end() {
-		DriveSubsystem.getInstance().setMotors(0);
+		Robot.driveSys.setMotors(0);
 	}
 
 	/**

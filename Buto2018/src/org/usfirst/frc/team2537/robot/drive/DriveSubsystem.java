@@ -13,27 +13,25 @@ import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class DriveSubsystem extends Subsystem{
-
-	private static DriveSubsystem singleton;
-	
 	
 /******************************************************************************/
 /*                              PUBLIC CONSTANTS                              */
 /******************************************************************************/
 		
-		/** set to 1 if the motors are in the forward direction
-		 *  otherwise set to -1 when the motors are upside-down
-		 *  
-		 *  methods in this class that take speed parameters use these
-		 *  multipliers to flip the sign of reversed motors.
-		 */
-		public static final int LEFT_MOTOR_DIRECTION = 1;
-		public static final int RIGHT_MOTOR_DIRECTION = -1;
+	/** set to 1 if the motors are in the forward direction
+	 *  otherwise set to -1 when the motors are upside-down
+	 *  
+	 *  methods in this class that take speed parameters use these
+	 *  multipliers to flip the sign of reversed motors.
+	 */
+	public static final int LEFT_MOTOR_DIRECTION = 1;
+	public static final int RIGHT_MOTOR_DIRECTION = -1;
 
 		
 /******************************************************************************/
 /*                             INSTANCE VARIABLES                             */
 /******************************************************************************/
+	
 	
 	private TalonSRX talonFrontLeft;
 	private TalonSRX talonFrontRight;
@@ -46,14 +44,8 @@ public class DriveSubsystem extends Subsystem{
 /*                                CONSTRUCTORS                                */
 /******************************************************************************/
 	
-	public static DriveSubsystem getInstance(){
-		if(singleton == null){
-			singleton = new DriveSubsystem();
-		}
-		return singleton;
-	}
 	
-	private DriveSubsystem(){
+	public DriveSubsystem(){
 		talonFrontLeft  = new TalonSRX(Ports.FRONT_LEFT_MOTOR);
 		talonFrontRight = new TalonSRX(Ports.FRONT_RIGHT_MOTOR);
 		talonBackLeft   = new PWMTalonSRX(Ports.BACK_LEFT_MOTOR);
@@ -72,6 +64,7 @@ public class DriveSubsystem extends Subsystem{
 	@Override
 	protected void initDefaultCommand() {
 	}
+	
 	
 /******************************************************************************/
 /*                              ENCODER METHODS                               */
@@ -116,6 +109,7 @@ public class DriveSubsystem extends Subsystem{
 /*                               MOTOR METHODS                                */
 /******************************************************************************/
 	
+	
 	public void setMotors(double speed, Motor id){
 		if(id == Motor.FRONT_LEFT || id == Motor.LEFT || id == Motor.FRONT || id == Motor.ALL){
 			talonFrontLeft.set(controlMode, speed*LEFT_MOTOR_DIRECTION);
@@ -146,11 +140,10 @@ public class DriveSubsystem extends Subsystem{
 /*                                  SETTERS                                   */
 /******************************************************************************/
 
-/** control mode not actually changed until you 
- * set a value (thanks a lot dumbasses @ ctre)
- * @param controlMode
- */
-	
+	/** control mode not actually changed until you 
+	 * set a value (thanks a lot dumbasses @ ctre)
+	 * @param controlMode
+	 */
 	public void setMode(ControlMode controlMode) {
 		this.controlMode = controlMode;
 	}
