@@ -9,8 +9,7 @@ public enum Distances{
 	FEET			(INCHES.getTicks()*12),
 	CENTIMETERS		(INCHES.getTicks()/2.54),
 	METERS			(CENTIMETERS.getTicks()*100),
-	NAUTICAL_MILES	(METERS.getTicks()*1852)
-	;
+	NAUTICAL_MILES	(METERS.getTicks()*1852);
 	
 	private final double toTicks;
 	

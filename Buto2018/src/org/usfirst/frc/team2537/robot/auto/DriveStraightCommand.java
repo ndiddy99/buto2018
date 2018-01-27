@@ -2,7 +2,6 @@ package org.usfirst.frc.team2537.robot.auto;
 
 import org.usfirst.frc.team2537.robot.conversions.Conversions;
 import org.usfirst.frc.team2537.robot.conversions.Distances;
-import org.usfirst.frc.team2537.robot.conversions.Times;
 import org.usfirst.frc.team2537.robot.drive.DriveSubsystem;
 import org.usfirst.frc.team2537.robot.drive.Motor;
 
@@ -114,8 +113,8 @@ public class DriveStraightCommand extends Command {
 			slowDownDelta = normalizedAngle * ANGLE_PID[0] * power;
 		}
 
-		DriveSubsystem.getInstance().setMotors(power - slowDownDelta, Motor.FRONT_LEFT, Motor.BACK_LEFT);
-		DriveSubsystem.getInstance().setMotors(power + slowDownDelta, Motor.FRONT_RIGHT, Motor.BACK_RIGHT);
+		DriveSubsystem.getInstance().setMotors(power - slowDownDelta, Motor.LEFT);
+		DriveSubsystem.getInstance().setMotors(power + slowDownDelta, Motor.RIGHT);
 	}
 
 	@Override

@@ -39,8 +39,6 @@ public class DriveSubsystem extends Subsystem{
 	private TalonSRX talonFrontRight;
 	private PWMTalonSRX talonBackLeft;
 	private PWMTalonSRX talonBackRight;
-	private EncoderUpdater encFrontLeft;
-	private EncoderUpdater encFrontRight;
 	public ControlMode controlMode = ControlMode.PercentOutput;
 	
 	
@@ -63,8 +61,6 @@ public class DriveSubsystem extends Subsystem{
 		
 		talonFrontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,  0,0);
 		talonFrontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0,0);
-		encFrontLeft = new EncoderUpdater(talonFrontLeft);
-		encFrontRight = new EncoderUpdater(talonFrontRight);
 	}
 	
 	
@@ -104,11 +100,6 @@ public class DriveSubsystem extends Subsystem{
 		 talonFrontLeft.getSensorCollection().setQuadraturePosition(0,0);
 	}
 	
-	public void updateEncoders(){
-		encFrontLeft.update();
-		encFrontRight.update();
-	}
-	
 	/**
 	 * @return average velocity of all talons in inches per second
 	 */
@@ -125,7 +116,7 @@ public class DriveSubsystem extends Subsystem{
 /*                               MOTOR METHODS                                */
 /******************************************************************************/
 	
-	public void setMotor(double speed, Motor id){
+	public void setMotors(double speed, Motor id){
 		if(id == Motor.FRONT_LEFT || id == Motor.LEFT || id == Motor.FRONT || id == Motor.ALL){
 			talonFrontLeft.set(controlMode, speed*LEFT_MOTOR_DIRECTION);
 		}
@@ -145,7 +136,7 @@ public class DriveSubsystem extends Subsystem{
 			setMotors(speed, Motor.FRONT_LEFT, Motor.FRONT_RIGHT, Motor.BACK_LEFT, Motor.BACK_RIGHT);
 		} else {
 			for(Motor motor : motors){
-				setMotor(speed,motor);
+				setMotors(speed,motor);
 			}
 		}
 	}

@@ -28,7 +28,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		DriveSubsystem.getInstance().updateEncoders();
 		Scheduler.getInstance().run();
 	}
 
@@ -39,7 +38,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		DriveSubsystem.getInstance().updateEncoders();
 		Scheduler.getInstance().run();
 	}
 
