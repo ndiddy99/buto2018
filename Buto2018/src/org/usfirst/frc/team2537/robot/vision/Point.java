@@ -1,9 +1,6 @@
 package org.usfirst.frc.team2537.robot.vision;
 
 public class Point {
-	public static final int CAMERA_WIDTH = 640;
-	public static final int CAMERA_HEIGHT = 480;
-	
 	private int x;
 	private int y;
 
@@ -25,12 +22,12 @@ public class Point {
 	}
 	
 	public double getX(CoordinateSystems system){
-		double currentX = x, halfWidth = CAMERA_WIDTH/2.0;
+		double currentX = x, halfWidth = SerialSubsystem.CAMERA_WIDTH/2.0;
 		if(system == CoordinateSystems.CARTESIAN || system == CoordinateSystems.CARTESIAN_NORMALIZED){
 			currentX -= halfWidth;
 		}
 		if(system == CoordinateSystems.UV_NORMALIZED){
-			currentX /= CAMERA_WIDTH;
+			currentX /= SerialSubsystem.CAMERA_WIDTH;
 		}
 		if(system == CoordinateSystems.CARTESIAN_NORMALIZED){
 			currentX /= halfWidth;
@@ -39,13 +36,13 @@ public class Point {
 	}
 	
 	public double getY(CoordinateSystems system){
-		double currentY = y, halfHeight = CAMERA_HEIGHT/2.0;
+		double currentY = y, halfHeight = SerialSubsystem.CAMERA_HEIGHT/2.0;
 		if(system == CoordinateSystems.CARTESIAN || system == CoordinateSystems.CARTESIAN_NORMALIZED){
 			currentY *= -1;
 			currentY += halfHeight;
 		}
 		if(system == CoordinateSystems.UV_NORMALIZED){
-			currentY /= CAMERA_HEIGHT;
+			currentY /= SerialSubsystem.CAMERA_HEIGHT;
 		}
 		if(system == CoordinateSystems.CARTESIAN_NORMALIZED){
 			currentY /= halfHeight;

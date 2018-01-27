@@ -6,8 +6,10 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class SerialSubsystem extends Subsystem {
-	public final boolean DEBUG = true;
-	public final int BAUDRATE = 38400;
+	public static final boolean DEBUG = true;
+	public static final int BAUDRATE = 38400;
+	public static final int CAMERA_WIDTH = 640;  //pixels
+	public static final int CAMERA_HEIGHT = 480; //pixels
 	
 	private SerialPort serial;
 	private String buffer;

@@ -23,7 +23,7 @@ public class ReadSerialCommand extends Command {
 	protected void execute() {
 		Robot.serialSys.addToBuffer();
 		Target[] currentPacket = Robot.serialSys.getVisionPacket();
-		if (Robot.serialSys.DEBUG && System.currentTimeMillis() - lastTimePrinted >= 1000) {
+		if (SerialSubsystem.DEBUG && System.currentTimeMillis() - lastTimePrinted >= 1000) {
 			System.out.println("number of targets: " + currentPacket.length);
 			for (int i = 0; i < currentPacket.length; i++) {
 				System.out.println("current target number: " + i);
